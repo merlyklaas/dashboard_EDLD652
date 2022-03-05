@@ -492,7 +492,7 @@ ggplotly(or_book)
 
 ### Oregon Colorblind Friendly Version
 
-<!-- ![](/Users/cassiemalcom/Desktop/CM2020/22_Winter Term Classes/EDLD 652_DS2/EDLD652_FinalPrj/Scripts/Images/ORtxtbk_colorblind.png) -->
+![](/Users/cassiemalcom/Desktop/CM2020/22_Winter Term Classes/EDLD 652_DS2/dashboard_EDLD652/ORtxtbk_colorblind.png)
 
 # RQ2 Achievement vs Spending
 
