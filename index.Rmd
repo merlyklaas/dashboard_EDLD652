@@ -1,5 +1,5 @@
 ---
-title: "US High School Students Demographics, Support, and Achievements"
+title: "US High School Students Demographics, Textbook Spending , and Achievements"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -71,12 +71,12 @@ Column 1 {data-width=100}
 -----------------------------------------------------------------------
 **Research Question**
 
-How does the the proficiently level in language and math vary across state for High School Students? How does it differ by students characteristics such as English Learner status, Student with Disability, Low Income students?
+How does the the proficiency level in Reading and Language skill vary across state for High School Students? How does it differ by students characteristics such as English Learner status, Student with Disability, Low Income students?
 
 
 
 
-**Data Source:** https://usafacts.org/
+**Data Source:** https://usafacts.org/ 
 
 
 
@@ -276,7 +276,7 @@ Column 1 {data-width=100}
 -----------------------------------------------------------------------
 **Research Question**
 
-How does the the proficiently level in  math vary across state for High School Students? Also, how does it vary across the US regions (i.e Midwest, Northeast, South, and West)?
+How does the the proficiency level in  math vary across state for High School Students? Also, how does it vary across the US regions (i.e Midwest, Northeast, South, and West)?
 
 
 
@@ -520,7 +520,23 @@ ggplotly(or_book)
 
 # RQ2 Achievement vs Spending
 
-Column {.tabset data-width=600}
+Column 1 {data-width=100}
+-----------------------------------------------------------------------
+**Research Question**
+
+What is the relationship between District Textbook Funding per Student and Students Math and RLA achievements?
+How similar or different the relationship pattern of Textbook spending with Math and RLA achievement? 
+
+
+
+
+**Data Source:** https://usafacts.org/
+
+
+-----------------------------------------------------------------------
+
+
+Column {.tabset data-width=500}
 -----------------------------------------------------------------------
 
 ### Math & Textbook Spending
