@@ -7,7 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny", "gghighlight")
+pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny", "gghighlight", "ggtext")
 ```
 
 # Research Question 1a
@@ -576,8 +576,23 @@ geom_point(data=filter(state_r2b,
        y = "% of Students at & above Proficiency Level",
       size = "Spending \nper Student",
       caption = "3 Top/Bottom States with Percent of Student at and above Math Proficiency \nare labeled and colored blue/red, respectively")+
+    geom_richtext(x=90,y=50, label="<i>R</i> = 0.33 \n<i>p</i> = 0.045", size = 2, color = "gray30")+
   theme(legend.position = "bottom")
+    
 ```
+```{r include=FALSE}
+library("ggpubr")
+ggscatter(state_r2b, x = "stperstudbook", y = "allmath", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson")
+
+ggscatter(state_r2b, x = "stperstudbook", y = "allrla", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson")
+
+
+```
+
 
 ```{r include=FALSE}
 fo <- state_r2b %>% 
@@ -635,7 +650,8 @@ state_r2b%>%
   labs(title= "Textbook Spending & RLA Achievement",
       x = "Textbook spending per student", 
        y = "Percent of Students at Proficiency Level")+ 
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  geom_richtext(x=90,y=45, label="<i>R</i> = 0.082 \n<i>p</i> = 0.6", size = 3, color = "gray30")
 
 ```
 
