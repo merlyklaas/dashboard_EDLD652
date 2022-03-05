@@ -286,7 +286,7 @@ region <- import(here("data", "us census bureau regions and divisions.csv")) %>%
   rename(stnam = State) 
 heatmap <- left_join(state_r2b, region)
 
-heatmap %>% 
+e <- heatmap %>% 
     group_by(Region, stnam) %>% 
   drop_na() %>% 
     ggplot() +
@@ -298,6 +298,7 @@ heatmap %>%
     scale_x_continuous(expand = c(0,0), labels = scales::comma ) + 
   theme (axis.ticks = element_blank()) + 
     scico::scale_fill_scico_d() 
+ggplotly(e)
 ```
 
 
@@ -491,7 +492,7 @@ ggplotly(or_book)
 
 ### Oregon Colorblind Friendly Version
 
-![](/Users/cassiemalcom/Desktop/CM2020/22_Winter Term Classes/EDLD 652_DS2/EDLD652_FinalPrj/Scripts/Images/ORtxtbk_colorblind.png)
+<!-- ![](/Users/cassiemalcom/Desktop/CM2020/22_Winter Term Classes/EDLD 652_DS2/EDLD652_FinalPrj/Scripts/Images/ORtxtbk_colorblind.png) -->
 
 # RQ2 Achievement vs Spending
 
