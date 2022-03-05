@@ -7,7 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny")
+pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny", "gghighlight")
 ```
 
 # Research Question 1a
@@ -67,7 +67,18 @@ Column {data-width=350}
 
 # RQ2 RLA
 
+Column 1 {data-width=100}
+-----------------------------------------------------------------------
+**Research Question**
+
 How does the the proficiently level in language and math vary across state for High School Students? How does it differ by students characteristics such as English Learner status, Student with Disability, Low Income students?
+
+
+
+
+**Data Source:** https://usafacts.org/
+
+
 
 -----------------------------------------------------------------------
 
@@ -152,7 +163,7 @@ plot <-plot_grid(title, p, legend,ncol=1,rel_heights = c(0.1,1))
 
 ```
 
-Column {data-width=600}
+Column {data-width=500}
 -----------------------------------------------------------------------
 ### Percent of students at and above Reading and Languange Proficiency Level based on characteristics across the States
 
@@ -261,7 +272,18 @@ ggplotly(allp)
 ```
 # RQ2 Math 
 
-How does the the proficiently level in  math vary across state for High School Students? How does it differ by students characteristics such as English Learner status, Student with Disability, Low Income students?
+Column 1 {data-width=100}
+-----------------------------------------------------------------------
+**Research Question**
+
+How does the the proficiently level in  math vary across state for High School Students? Also, how does it vary across the US regions (i.e Midwest, Northeast, South, and West)?
+
+
+
+
+
+**Data Source:** https://usafacts.org/
+
 
 -----------------------------------------------------------------------
 
@@ -275,11 +297,11 @@ state_r2$math_z <- round(state_r2$allmath - mean(state_r2$allmath),2)
 state_r2$math_type <-ifelse(state_r2$math_z < 0, "below", "above")
 ```
 
-Column {data-width=500}
+Column {data-width=450}
 ----------------------------------------------------------------------- 
 
 
-### Math Profiency by Regions
+### Math Proficiency by Regions
 
 ```{r}
 region <- import(here("data", "us census bureau regions and divisions.csv")) %>% 
@@ -300,9 +322,10 @@ e <- heatmap %>%
     scico::scale_fill_scico_d() 
 ggplotly(e)
 ```
+> The south region has relatively high percentage of students at and above Math proficiency, in contrast, the West region has relatively low percentage of students at and above Math proficiency. There is no clear pattern for Midwest and Northeast regions as there are large variation of Math profiency within those regions. 
 
 
-Column {.tabset data-width=500}
+Column {.tabset data-width=450}
 ----------------------------------------------------------------------- 
 
 ### Diverging Bars for Math Scores
@@ -347,7 +370,7 @@ ggplotly(pmath)
 ```
 
 
-# RQ2 Textbook Expenses
+# RQ2 Textbook Spending
 
 
 
@@ -457,7 +480,7 @@ ggplotly(wv_book)
 
 ### Oregon
 
-```{r}
+```{r include=FALSE}
 textbook_or <- dist_r2b %>% 
   filter(stnam == "Oregon") %>% 
   mutate(perstudbook = round(perstudbook,2))
@@ -484,6 +507,7 @@ or_book <- left_join(or, textbook_or) %>%
   labs(title= "Textbook spending per student for school districts in Oregon",
          fill = "Textbook funding per student")
 ```
+
 ```{r}
 ggplotly(or_book)
 ```
@@ -492,14 +516,52 @@ ggplotly(or_book)
 
 ### Oregon Colorblind Friendly Version
 
-![](/Users/cassiemalcom/Desktop/CM2020/22_Winter Term Classes/EDLD 652_DS2/dashboard_EDLD652/ORtxtbk_colorblind.png)
+![Color-blind OR Plot](Data/ORtxtbk_colorblind.png)
 
 # RQ2 Achievement vs Spending
 
-Column {data-width=600}
+Column {.tabset data-width=600}
 -----------------------------------------------------------------------
 
-### Final Option
+### Math & Textbook Spending
+```{r}
+state_r2b%>% 
+  select(stnam, stperstudbook, allmath) %>% 
+  drop_na() %>% 
+  ggplot(aes(stperstudbook, allmath))+
+  geom_point( color = "gray", size = 4, alpha = 0.4) +
+  geom_smooth(fill= "gray90",method = "lm", color = "gray")+
+  geom_point(data=filter(state_r2b, 
+                         stnam == "Virginia" | 
+                           stnam== "Nebraska"|
+                           stnam== "New York"), 
+             color = "#2596be", 
+             alpha = 0.8, 
+             size =4)+ 
+geom_point(data=filter(state_r2b, 
+                       stnam == "Tennessee"|
+                         stnam== "Rhode Island"| 
+                         stnam== "District Of Columbia"),
+           color = "#F67575", 
+           alpha = 0.8, 
+           size =4) + 
+  geom_text_repel(data= subset(state_r2b, 
+                               stnam == "Virginia" | 
+                                 stnam== "Nebraska"|
+                                 stnam =="New York" |
+                                 stnam == "Tennessee" | 
+                                 stnam== "Rhode Island"|
+                                 stnam== "District Of Columbia"),
+                               aes(label =stnam)) +
+  theme_minimal()+
+  xlim (14,108) + 
+    labs(title= "Textbook Spending & Math Achievement",
+      x = "Textbook spending per student", 
+       y = "% of Students at & above Proficiency Level",
+      size = "Spending \nper Student",
+      caption = "3 Top/Bottom States with Percent of Student at and above Math Proficiency \nare labeled and colored blue/red, respectively")+
+  theme(legend.position = "bottom")
+```
 
 ```{r include=FALSE}
 fo <- state_r2b %>% 
@@ -539,10 +601,28 @@ ggplot(aes(allrla, fct_reorder(stnam, allrla))) +
   guides(color = "white")
 ```
 
+### RLA & Textbook Spending
 
 ```{r}
 ggplotly(fo)
 ```
+
+### Math & Textbook Spending (Raw LM)
+
+```{r}
+state_r2b%>% 
+  ggplot(aes(stperstudbook,allrla))+
+  geom_point(aes(size = stperstudbook), alpha = 0.3) +
+  geom_smooth(method = "lm")+
+  geom_text_repel(aes(label = stnam))+
+  scale_x_continuous(expand = c(0,0)) +
+  labs(title= "Textbook Spending & RLA Achievement",
+      x = "Textbook spending per student", 
+       y = "Percent of Students at Proficiency Level")+ 
+  theme(legend.position = "bottom")
+
+```
+
 
 Column {data-width=400}
 -----------------------------------------------------------------------
@@ -566,18 +646,23 @@ ggplot(aes(allrla, fct_reorder(stnam, allrla))) +
   theme(axis.text.y = element_text(size=8))
 ggplotly(op1)
 ```
+### Math & Achievement gghighlight
 
-### lm rla
 ```{r}
 state_r2b%>% 
-  ggplot(aes(stperstudbook,allrla))+
-  geom_point() +
-  geom_smooth(method = "lm")+
-  geom_text_repel(aes(label = stnam))+
-  scale_x_continuous(expand = c(0,0)) +
-  labs(title= "Textbook Spending & RLA Achievement",
+  select(stnam, stperstudbook, allmath) %>% 
+  drop_na() %>% 
+  ggplot(aes(stperstudbook, allmath, color = stnam)) +
+  geom_point( size = 4 , alpha=0.7)+
+  gghighlight(allmath > 80| allmath < 40, label_key = stnam) +
+  xlim (14,108) + 
+ # scale_x_continuous(expand = c(0,0)) +
+    labs(title= "Textbook Spending & Math Achievement",
       x = "Textbook spending per student", 
-       y = "Percent of Students at Proficiency Level")
+       y = "% of Students at & above Proficiency Level",
+      size = "Spending \nper Student", 
+      caption = "Highlighting State Above 80% and Below 40%")+
+  theme(legend.position = "bottom") 
 ```
 
 
