@@ -657,9 +657,9 @@ ggplot(aes(allrla, fct_reorder(stnam, allrla))) +
        size= "Spending on textbook per student",
        color="",
        legend= "") +
-  annotate(x=mean(state_r2b$allrla),y="Montana",label="National \nAverage",geom="label", size = 6)+
   theme_minimal() +
-  theme(axis.text.y = element_text(size=8))
+  theme(axis.text.y = element_text(size=8)) +
+  annotate("text", x=64,y="Texas", label="National \nAverage", size = 3, color = "gray30")
 ggplotly(op1)
 ```
 ### Math & Achievement gghighlight
