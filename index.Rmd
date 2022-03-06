@@ -549,6 +549,7 @@ Column {.tabset data-width=500}
 state_r2b%>% 
   select(stnam, stperstudbook, allmath) %>% 
   drop_na() %>% 
+  filter(!stnam == "District Of Columbia") %>% 
   ggplot(aes(stperstudbook, allmath))+
   geom_point( color = "gray", size = 4, alpha = 0.4) +
   geom_smooth(fill= "gray90",method = "lm", color = "gray")+
@@ -562,7 +563,7 @@ state_r2b%>%
 geom_point(data=filter(state_r2b, 
                        stnam == "Tennessee"|
                          stnam== "Rhode Island"| 
-                         stnam== "District Of Columbia"),
+                         stnam== "Minnesota"),
            color = "#F67575", 
            alpha = 0.8, 
            size =4) + 
@@ -572,7 +573,7 @@ geom_point(data=filter(state_r2b,
                                  stnam =="New York" |
                                  stnam == "Tennessee" | 
                                  stnam== "Rhode Island"|
-                                 stnam== "District Of Columbia"),
+                                 stnam== "Minnesota"),
                                aes(label =stnam)) +
   theme_minimal()+
   xlim (14,108) + 
@@ -689,6 +690,7 @@ ggplotly(op1)
 state_r2b%>% 
   select(stnam, stperstudbook, allmath) %>% 
   drop_na() %>% 
+  filter(!stnam == "District Of Columbia") %>% 
   ggplot(aes(stperstudbook, allmath, color = stnam)) +
   geom_point( size = 4 , alpha=0.7)+
   gghighlight(allmath > 80| allmath < 40, label_key = stnam) +
