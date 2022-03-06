@@ -10,59 +10,6 @@ output:
 pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny", "gghighlight", "ggtext")
 ```
 
-# Research Question 1a
-
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart A
-
-```{r}
-
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-
-```
-
-### Chart C
-
-```{r}
-
-```
-
-
-# Research Question 1b
-
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart A
-
-```{r}
-
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
-
-```{r}
-
-```
-
-### Chart C
-
-```{r}
-
-```
-
 
 
 # RQ2 RLA
@@ -76,8 +23,8 @@ How does the the proficiency level in Reading and Language skill vary across sta
 
 
 
-**Data Source:** https://usafacts.org/ 
-
+**Data Source:** 
+State Assessments in Reading/Language Arts and Mathematics- School Year 2018-19 EDFacts Data Documentation, U.S. Department of Education, Washington, DC: EDFacts. Retrieved February 2, 2022 from http://www.ed.gov/edfacts
 
 
 -----------------------------------------------------------------------
@@ -281,8 +228,9 @@ How does the the proficiency level in  math vary across state for High School St
 
 
 
+**Data Source:** 
+State Assessments in Reading/Language Arts and Mathematics- School Year 2018-19 EDFacts Data Documentation, U.S. Department of Education, Washington, DC: EDFacts. Retrieved February 2, 2022 from http://www.ed.gov/edfacts
 
-**Data Source:** https://usafacts.org/
 
 
 -----------------------------------------------------------------------
@@ -303,14 +251,16 @@ Column {data-width=450}
 
 ### Math Proficiency by Regions
 
+
 ```{r}
 region <- import(here("data", "us census bureau regions and divisions.csv")) %>% 
   rename(stnam = State) 
 heatmap <- left_join(state_r2b, region)
 
 e <- heatmap %>% 
-    group_by(Region, stnam) %>% 
-  drop_na() %>% 
+    group_by(stnam, Region) %>% 
+  drop_na(allmath) %>% 
+  drop_na(Region) %>% 
     ggplot() +
     geom_col(aes(allmath, fct_reorder(stnam, allmath), fill = Region)) + 
       labs(x= "Percent of student at and above Proficiency level in Math",
@@ -322,7 +272,8 @@ e <- heatmap %>%
     scico::scale_fill_scico_d() 
 ggplotly(e)
 ```
-> The south region has relatively high percentage of students at and above Math proficiency, in contrast, the West region has relatively low percentage of students at and above Math proficiency. There is no clear pattern for Midwest and Northeast regions as there are large variation of Math profiency within those regions. 
+> The south region has relatively high percentage of students at and above Math proficiency, in contrast, the West region has relatively low percentage of students at and above Math proficiency. There is no clear pattern for Midwest and Northeast regions as there is large variation of Math profiency within these regions. 
+
 
 
 Column {.tabset data-width=450}
@@ -372,7 +323,21 @@ ggplotly(pmath)
 
 # RQ2 Textbook Spending
 
+Column 1 {data-width=100}
+-----------------------------------------------------------------------
+**Research Question**
 
+How does the the proficiency level in Reading and Language skill vary across state for High School Students? How does it differ by students characteristics such as English Learner status, Student with Disability, Low Income students?
+
+
+
+
+**Data Source:** 
+Distric Fiscal documentation 2018 
+[School year 2019](https://nces.ed.gov/ccd/Data/txt/sdf19_1a_layout.docx) Retrieved February 2, 2022.
+
+
+> On Average, Indiana spent the most on textbook per student at $107, while Hawaii spent the least on textbook per student at $14.
 
 -----------------------------------------------------------------------
 
@@ -389,16 +354,18 @@ ggplot() +
         axis.text.x = element_blank(), 
         axis.ticks = element_blank(),
         axis.text.y = element_blank(),
+         legend.key.height = unit(0.1,"cm"),
         rect = element_blank(),
         panel.grid.major = element_blank())
 
 
 ```
 
-Column {data-width=500}
+Column {data-width=600}
 -----------------------------------------------------------------------
 
 ### Textbook spending across the US
+
 
 ```{r}
 
@@ -406,10 +373,47 @@ ggplotly(textbook_us)
 ```
 
 
-Column {.tabset data-width=500}
+Column {.tabset data-width=300}
 -----------------------------------------------------------------------
 
+### Indiana
+
+```{r include=FALSE}
+book_ind <- dist_r2b %>% 
+  filter(stnam == "Indiana") %>% 
+  mutate(perstudbook = round(perstudbook,2))
+  
+
+ind <- lea_get(state = "in") %>% 
+    sf::st_as_sf() %>% 
+  rename(leaid = GEOID) %>% 
+  mutate(leaid = as.integer(leaid)) 
+
+
+ind_book <- left_join(ind, book_ind) %>% 
+  rename( `textbook($)` = perstudbook) %>% 
+  ggplot() +
+  geom_sf(aes(fill = `textbook($)`), size = 0.1) +
+  scale_fill_continuous_divergingx(palette = "Earth",  labels = scales::dollar) +
+  theme_minimal()+
+  theme(legend.key.height= unit(0.5, 'cm'),
+        legend.key.width= unit(.5, 'cm'),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+         panel.grid.major = element_blank()) +
+  labs(fill = "Textbook funding \nper student",
+       title = "Textbook spending per student for school districts in Indiana")
+```
+
+
+```{r}
+ggplotly(ind_book)
+```
+
+
 ### Virginia
+
+
 ```{r include=FALSE}
 book_va <- dist_r2b %>% 
   filter(stnam == "Virginia") %>% 
@@ -428,18 +432,17 @@ va_book <- left_join(va, book_va) %>%
   geom_sf(aes(fill = `textbook($)`), size = 0.1) +
   scale_fill_continuous_divergingx(palette = "Earth",  labels = scales::dollar) +
   theme_minimal()+
-  theme(legend.position = "none",
-        legend.direction = "horizontal",
-        legend.key.size = unit(1, 'cm'),
-        legend.key.height = unit(.5,"cm"),
+  theme(legend.key.height= unit(0.5, 'cm'),
+        legend.key.width= unit(.5, 'cm'),
         axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
-  labs(fill = "Textbook funding per student",
+        axis.text.y=element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(fill = "Textbook funding \nper student",
        title = "Textbook spending per student for school districts in Virginia")
 ```
 
 ```{r}
-ggplotly(va_book)
+va_book
 ```
 
 ### West Virginia
@@ -462,14 +465,13 @@ wv_book <- left_join(wv, textbook_wv) %>%
   theme_minimal()+
   scale_fill_continuous_divergingx(palette = "Earth",  labels = scales::dollar) +
   theme_minimal()+
-  theme(legend.position = "none",
-        legend.direction = "horizontal",
-        legend.key.size = unit(1, 'cm'),
-        legend.key.height = unit(.5,"cm"),
+  theme(legend.key.height= unit(0.5,'cm'),
+        legend.key.width= unit(.5,'cm'),
         axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
+        axis.text.y=element_blank(),
+         panel.grid.major = element_blank()) +
   labs(title= "Textbook spending per student for school districts in West Virginia",
-         fill = "Textbook funding per student")
+         fill = "Textbook funding \nper student")
 ```
 
 
@@ -498,18 +500,17 @@ or_book <- left_join(or, textbook_or) %>%
   theme_minimal()+
   scale_fill_continuous_divergingx(palette = "Earth",  labels = scales::dollar) +
   theme_minimal()+
-  theme(legend.position = "none",
-        legend.direction = "horizontal",
-        legend.key.size = unit(1, 'cm'),
-        legend.key.height = unit(.5,"cm"),
+  theme(legend.key.height= unit(0.5, 'cm'),
+        legend.key.width= unit(.5, 'cm'),
         axis.text.x=element_blank(),
-        axis.text.y=element_blank()) +
+        axis.text.y=element_blank(),
+         panel.grid.major = element_blank()) +
   labs(title= "Textbook spending per student for school districts in Oregon",
-         fill = "Textbook funding per student")
+         fill = "Textbook funding \nper student")
 ```
 
 ```{r}
-ggplotly(or_book)
+or_book
 ```
 
 
@@ -524,13 +525,14 @@ Column 1 {data-width=100}
 -----------------------------------------------------------------------
 **Research Question**
 
-What is the relationship between District Textbook Funding per Student and Students Math and RLA achievements?
-How similar or different the relationship pattern of Textbook spending with Math and RLA achievement? 
+What is the relationship between District Textbook Funding per Student and Students' Math and RLA achievements?
 
 
 
 
-**Data Source:** https://usafacts.org/
+**Data Source:** 
+State Assessments in Reading/Language Arts and Mathematics- School Year 2018-19 EDFacts Data Documentation, U.S. Department of Education, Washington, DC: EDFacts. Retrieved February 2, 2022 from http://www.ed.gov/edfacts
+
 
 
 -----------------------------------------------------------------------
@@ -540,6 +542,9 @@ Column {.tabset data-width=500}
 -----------------------------------------------------------------------
 
 ### Math & Textbook Spending
+
+> States with relatively low spending on textbook has lower students at and above Math proficiency level. 
+
 ```{r}
 state_r2b%>% 
   select(stnam, stperstudbook, allmath) %>% 
