@@ -96,7 +96,7 @@ For school year 2017-2018, how was  the student population distributed over diff
 
 
 
-Column {data-width=650 .tabset}
+Column {.tabset data-width=650}
 -----------------------------------------
 
 ### First Iteration
@@ -258,7 +258,7 @@ For school year 2017-2018, how was the teacher population distributed over diffe
 
 
 
-Column {data-width=650 .tabset}
+Column {.tabset data-width=650}
 -----------------------------------------
 
 ### Teacher population by race and ethnicity
@@ -436,7 +436,7 @@ Is the student population changing over time? What happened during Covid?
 
 
 
-Column {data-width=650 .tabset}
+Column {.tabset data-width=650}
 -----------------------------------------
 
 ### Change from 2018-2020 - Iteration 1 
