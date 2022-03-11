@@ -708,6 +708,7 @@ plot <-plot_grid(title, p, legend,ncol=1,rel_heights = c(0.1,1))
 
 ```
 
+
 Column {data-width=500}
 -----------------------------------------------------------------------
 ### Percent of students at and above Reading and Languange Proficiency Level based on characteristics across the States
@@ -717,6 +718,7 @@ Column {data-width=500}
 plot
 ```
 
+> I decided to use map graph to visualize the achievement gap of students with disability, EL students, and Low-income students compared to their peers. This way, audience can compare each state math achievement across all categories as well as able to perceive the intensity of gap with heatmap color for easier interpretation. 
 
 Column {.tabset data-width=400}
 -----------------------------------------------------------------------
@@ -746,6 +748,7 @@ cwdp <- r2a %>%
 ggplotly(cwdp)
 ```
 
+> The goal of these bar plots is to show achievement gap of students with disability, EL students, and Low-income students compared to their peers. In the previos set of plots, the bar was presented on its own. I decided to add the all students average in grey as the background for easier comparison. However, I want people to be able to compare the difference all at once in one frame. 
 
 ### B. English language learner
 
@@ -897,6 +900,7 @@ ppmath <- state_r2 %>%
 ggplotly(ppmath)
 
 ```
+> Another way to display the variation of Math proficiency skill across states is by showing how far the state mean diverge above and below the national mean. I like the simplicity of this map instead of the previous one and chose red color to represent below the average and green color to represent above the average. I think this map is easier to understand for general audience. 
 
 ### Diverging Lollipop Chart - Math
 
@@ -917,6 +921,7 @@ pmath <- state_r2 %>%
   theme(axis.text.y = element_text(size=8))
 ggplotly(pmath)
 ```
+> This is the initial diverging plot that includes anotated state mean difference relative to national average. However, the number is too small and the information has already displayed through the geom_segment() line. I decided to use the other diverging bar plot. 
 
 
 # RQ2 Textbook Spending
@@ -969,10 +974,12 @@ Column {data-width=600}
 
 ggplotly(textbook_us)
 ```
+> The average spending per students in district level is aggregated at the state level. Since we will calculate the textbook spending and student achievement only in state level, I decided to have to state-level map as the final version.  
 
 
 Column {.tabset data-width=300}
 -----------------------------------------------------------------------
+
 
 ### Indiana
 
@@ -1007,6 +1014,8 @@ ind_book <- left_join(ind, book_ind) %>%
 ```{r}
 ggplotly(ind_book)
 ```
+
+> Initially, we wanted to present overall district spending per student in one large US map. However, we had two problems with the plan. 1. The amount of time to render the plot is too long and 2. Too many information in one map and it might distract our audience from our main goal. We decided to have each state district spending and play around with ggplotly function where audience can zoom in and out easily. 
 
 
 ### Virginia
@@ -1141,7 +1150,7 @@ Column {.tabset data-width=500}
 
 ### Math & Textbook Spending
 
-> States with relatively low spending on textbook has lower students at and above Math proficiency level.
+> States with relatively low spending on textbook have lower percentage students at and above Math proficiency level.
 
 ```{r}
 state_r2b%>%
@@ -1184,6 +1193,10 @@ geom_point(data=filter(state_r2b,
   theme(legend.position = "bottom")
 
 ```
+
+> This is my final plot where I added a linear line and annotated the correlation between Textbook spending and Math achievement. I highlighted the 3 top and bottom states based on their Math achievement and colored the rest of the states with gray and a degree of transparency. This plot is simple and highlighted the most important information.
+
+
 ```{r include=FALSE}
 library("ggpubr")
 ggscatter(state_r2b, x = "stperstudbook", y = "allmath",
@@ -1236,13 +1249,16 @@ ggplot(aes(allrla, fct_reorder(stnam, allrla))) +
   guides(color = "white")
 ```
 
+
 ### RLA & Textbook Spending
 
 ```{r}
 ggplotly(fo)
 ```
 
-### Math & Textbook Spending (Raw LM)
+> Borrowing the existing template from another github, I tried to visualize the relationship between textbook spending and RLA achievement. I added the size function on geom_point to display amount of textbook spending. Eventhough the plot is pretty, the size of the point is a hard to discriminate. 
+
+### RLA & Textbook Spending (Raw LM)
 
 ```{r}
 state_r2b%>%
@@ -1258,6 +1274,8 @@ state_r2b%>%
   geom_richtext(x=90,y=45, label="<i>R</i> = 0.082 \n<i>p</i> = 0.6", size = 3, color = "gray30")
 
 ```
+
+> This is the initial plot when I tried to visualize the relationship between achievemen and textbook spending. Although all information is there, this map is too crowded with information of state name. 
 
 
 Column {data-width=400}
@@ -1282,6 +1300,9 @@ ggplot(aes(allrla, fct_reorder(stnam, allrla))) +
   annotate("text", x=64,y="Texas", label="National \nAverage", size = 3, color = "gray30")
 ggplotly(op1)
 ```
+
+> I like the simplicity of this plot and the national average dashed line, however, the geom_point size displaying textbook spending per student is hard to differenciate and overlapped with each other. 
+
 ### Math & Achievement gghighlight
 
 ```{r}
@@ -1302,7 +1323,7 @@ state_r2b%>%
   theme(legend.position = "bottom")
 ```
 
-
+> This plot is clean and interesting to see because I could highlight selected state based on upper and lower criteria I specified in my code. However, I only want to use two different colors to distinguish the 3 top and lower states. A variety of color on the circle and state names are a little bit too distracting. 
 
 
 # Research Question 3
