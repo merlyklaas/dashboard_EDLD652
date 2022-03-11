@@ -7,7 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes","ggtheme", "arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "shiny", "gghighlight", "ggtext", "viridis")
+pacman::p_load("tidyverse","rio","here","janitor", "usmap","maps", "colorspace","geofacet","leaidr", "viridis","ggthemes", "arrow", "forcats", "ggrepel","edld652", "mapproj","albersusa" , "cowplot", "biscale", "plotly", "ggeasy", "flexdashboard", "Hmisc", "psych", "dplyr", "stringr", "readr", "tidyr", "corrplot", "scales", "RColorBrewer", "ggmap", "devtools", "piggyback", "maptools", "gitcreds", "knitr", "kableExtra", "xtable", "PerformanceAnalytics", "corrgram", "GGally", "gghighlight", "ggtext", "viridis")
 ```
 
 
@@ -50,7 +50,7 @@ sm_p <- sm %>%
     )
 
 
-#Wide data frame for 
+#Wide data frame for change
 sm_wide <- sm %>% 
     pivot_wider(
         names_from = year,
@@ -66,7 +66,10 @@ sm_wide <- sm %>%
         pchange_1821 = ifelse(year_2018 == 0, NA, (year_2021 - year_2018)/year_2018),
         pchange_1720 = ifelse(year_2017 == 0, NA, (year_2020 - year_2017)/year_2017),
         pchange_2021 = ifelse(year_2020 == 0, NA, (year_2021 - year_2020)/year_2020)
-    )
+    )%>%
+        mutate(
+            race_ethnicity = ifelse(race_ethnicity == "Native Hawaiian or Other Pacific Islander", "Native Hawaiian or \nOther Pacific Islander", race_ethnicity)
+        )
 
 #us <- usa_sf()
 #us <- rename(us, st = iso_3166_2)
@@ -87,19 +90,34 @@ sm_18 <- sm %>%
     left_join(us, by = "st") 
 ```
 
-# RQ1: Student population
+# RQ 1 - A
 
 Sidebar Title {.sidebar}
 --------------
 
-For school year 2017-2018, how was  the student population distributed over different states by race and ethnicity? 
+**RQ 1: Student and Teacher ethnic distribution in K-12 public schools in the US in SY 2017-18**
 
+First, I tried to summarize state and ethnic-wise student population. For this I used the state membership data file. 
+
+The first challenge was to which number to report - the raw number, transform data to log, change scale to log scale, or percentage of state population. At the end, I decided to go with the percentage of state population. That is, I found the total number of students in a given state, and divided student count per ethnic group with this total.
+
+The next challenge was how to represent so much information in an effective way. My first two attempts involved using facet_wrap and facet_geo (first two tabs). I realized having a legend so far up isn't very audience friendly, and decided to go with choropleth maps. 
+
+The last few iterations involved position of legend, relative size of different elements, an appropriate title and subtitle, as well as a colorblind friendly theme. I tried almost all available palettes on R, and went ahead with "magma" from the `viridis` package. I made a second version of the map with a discrete scale, which I thought is better for a static version (third and fourth tabs). 
+
+The story I'm trying to tell is that the student population is more diverse than we think - the majority of our student population is students of color, and our education system should be culturally-relevant. 
+
+-------------
 
 
 Column {.tabset data-width=650}
 -----------------------------------------
 
 ### First Iteration
+
+
+
+
 
 
 ```{r }
@@ -114,7 +132,7 @@ facet <- ggplot(data = sm_18) +
         x = "Percent of students",
         y = ""
     )+
-    theme_minimal(base_size = 6)+
+    theme_minimal(base_size = 5)+
     scale_y_continuous(expand = c(0,0))
     # theme(
     #     axis.text.y = element_blank(),
@@ -159,7 +177,7 @@ geofacet
 
 ```{r}
 maptheme1 <- function() {
-    theme_map() +
+    ggthemes::theme_map(base_size=8) +
     theme(
         strip.background = element_blank(),
         legend.position = c(.77, .1),
@@ -177,7 +195,7 @@ maptheme1 <- function() {
 }
 
 maptheme2 <- function() {
-    theme_map() +
+    ggthemes::theme_map(base_size=8) +
     theme(
         strip.background = element_blank(),
         legend.position = "bottom",
@@ -196,6 +214,9 @@ maptheme2 <- function() {
 
 map <- sm_18 %>%  
         filter(!st %in% c("BI","AS","GU","PR","VI")) %>%
+        mutate(
+            race_ethnicity = ifelse(race_ethnicity == "Native Hawaiian or Other Pacific Islander", "Native Hawaiian or \nOther Pacific Islander", race_ethnicity)
+        ) %>% 
         ggplot(aes(geometry = geometry, fill = percent_s)) +
     	geom_sf(color = "gray70", size = 0.2) +
     	#guides(color = "none") +
@@ -225,6 +246,9 @@ map
 ```{r}
 map2 <- sm_18 %>%  
         filter(!st %in% c("BI","AS","GU","PR","VI")) %>% 
+        mutate(
+        race_ethnicity = ifelse(race_ethnicity == "Native Hawaiian or Other Pacific Islander", "Native Hawaiian or \nOther Pacific Islander", race_ethnicity)
+        ) %>% 
         mutate(bins = cut(percent_s, breaks = c(0,2,10,25,50,75, 91))) %>% 
         ggplot(aes(geometry = geometry, fill = bins)) +
     	geom_sf(color = "gray70", size = 0.2) +
@@ -236,7 +260,7 @@ map2 <- sm_18 %>%
         labs(
             title = "Student Diversity in K-12 Public Schools (2017-18)",
             subtitle = "52% of all students identify as non-White",
-            caption = " \n \nGray represents student proportion of less than 1%\nSource: U.S. Department of Education, National Center for Education Statistics, Common Core of Data (CCD)"
+            caption = " \n \nSource: U.S. Department of Education, National Center for Education Statistics, Common Core of Data (CCD)"
         )+
         guides(fill = guide_legend(nrow = 1))+
         facet_wrap(~ race_ethnicity, nrow = 2) +
@@ -249,13 +273,20 @@ map2
 
 ```
 
-#  RQ1: Student and teacher
+#  RQ1 - B
 
 Sidebar Title {.sidebar}
 --------------
 
-For school year 2017-2018, how was the teacher population distributed over different states by race and ethnicity? How does the student and teacher population of color compare? 
+**RQ 1: Student and Teacher ethnic distribution in K-12 public schools in the US in SY 2017-18**
 
+Once I had the student population by race/ethnicity, I created a similar visual for the teacher population. For this I used the publicly available summarized [table](https://nces.ed.gov/surveys/ntps/tables/ntps1718_fltable01_t1s.asp) from NCES. 
+
+Next, I wanted to compare the teacher of color and student of color side-by-side. I collapsed all the race and ethnicity that were non-White to get this number. I approached it from two ways. First, two side-by-side map for teacher and student of color. This looked fine, but didn't help make comparison easily. Next, I displayed the same information on a dot-plot. I felt this helped make the difference in the two population come out more effectively.
+
+In the final iterations, I revised the message, removed gridlines, added text, changed position of legends to make it more audience-friendly.
+
+The story here is that the student population is much more diverse than the teacher population, and this disparity can have huge consequences on the student outcomes. 
 
 
 Column {.tabset data-width=650}
@@ -264,12 +295,12 @@ Column {.tabset data-width=650}
 ### Teacher population by race and ethnicity
 
 ```{r}
-teacher <- import(here("data","ntps1718_fltable01_t1s.xlsx"), skip = 2, n_max = 62,
-                  na = "#") %>% 
+teacher <- import(here("data","ntps1718_fltable01_t1s.xlsx"), skip = 2, n_max = 62) %>% 
     clean_names() %>% 
     select(-c(3,5,7,9,11,13,15)) %>% 
     filter(!is.na(state))
-teacher[teacher == "‡"] <- NA
+teacher[teacher == "#"] <- 0 #code-book says # means rounds to 0
+teacher[teacher == "‡"] <- NA #code-book says this symbol means there were inconsistencies in the data
 
 teacher <- teacher %>% 
     select(
@@ -313,18 +344,21 @@ teacher_long <- teacher %>%
 ```{r}
 
 map_t <- teacher_long%>% 
+    mutate(
+        race = ifelse(race == "Native Hawaiian or Other Pacific Islander", "Native Hawaiian or \nOther Pacific Islander", race)
+    ) %>% 
     ggplot(aes(geometry = geometry, fill = percent_t)) +
 	geom_sf(color = "gray70", size = 0.2) +
 	#guides(color = "none") +
     scale_fill_viridis_c(option = "magma",
                              name = "Percent of Teachers",
                              direction = -1,
-                             limits = c(0,100)) +
+                             limits = c(0.5,100)) +
     #theme_map(base_size = 16) + 
     labs(
             title = "Teacher Diversity in K-12 Public Schools (2017-18)",
             subtitle = "21% of all teachers identify as non-White",
-            caption = " \n \nGray representes no data. \nSource: U.S. Department of Education, National Center for Education Statistics, National Teacher and Principal Survey (NTPS)"
+            caption = " \n \nNo teacher data for Maryland and Washington DC.\nGray represents a proportion less than 0.5%. \nSource: U.S. Department of Education, National Center for Education Statistics, National Teacher and Principal Survey (NTPS)"
         )+
     facet_wrap(~ race, nrow = 2) +
     guides(fill = guide_colourbar(title.position="top", barwidth = 5))+
@@ -342,7 +376,12 @@ map_t
 st_binary <- stu_teacher %>% 
     mutate(
         rbinary = ifelse(race == "White", "White","People of Color")
-    ) %>% 
+    ) %>%
+    # filter(state == "Hawaii") %>% 
+    # group_by(profession) %>% 
+    # summarise(
+    #     percent_total = sum(percent, na.rm = TRUE)
+    # )
     group_by(state, rbinary, profession) %>% 
     summarise(
         percent_total = sum(percent, na.rm = TRUE)
@@ -383,7 +422,7 @@ dotplot <- st_binary %>%
     filter(!state %in% c("Maryland", "District of Columbia")) %>% 
     ggplot(aes(x = percent_total, y = forcats::fct_reorder(state, percent_total))) +
     geom_line(aes(group = state), linetype = "dotted", color = "gray80")+
-    geom_point(aes(color = profession), size = 2)+
+    geom_point(aes(color = profession), size = 1.5)+
     # geom_text(data = filter(st_binary2, profession == "Student"),
     #                         aes(x=percent_total, y=state, label = round(percent_total,0)),
     #            nudge_x = 1, size = 4, family = "sans", color = "#1B9E77")+
@@ -427,14 +466,16 @@ dotplot <- st_binary %>%
 dotplot
 ```
  
-# RQ1: Student with year
+# RQ1 - C
 
 Sidebar Title {.sidebar}
 --------------
 
-Is the student population changing over time? What happened during Covid? 
+This is more exploratory, and wasn't a part of our original question.I became curious if the student population has been changing over time, and what happened during COVID? Though I haven't interpreted these results at length, it seems that the White student population decreased, and the Two or More races and Hispanic population increased over time (SY 2017-18 to SY 2019-2020). The rate was slower during COVID.
 
+For this, I sticked with my map theme, and used a diverging palette. In one case where I changed it to a discrete scale, I defined my own palette because I didn't want white as the center point. 
 
+The story here is that we can expect the student population to keep diversifying. The question for the public and policy makers is what are we doing to address these diverse needs, and whether conscious effort is being made to diversify the workforce. 
 
 Column {.tabset data-width=650}
 -----------------------------------------
