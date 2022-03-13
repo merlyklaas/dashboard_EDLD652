@@ -1,5 +1,5 @@
 ---
-title: "US High School Students Demographics, Textbook Spending , and Achievements"
+title: "School Diversity, Textbook Spending, and Achievements"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
