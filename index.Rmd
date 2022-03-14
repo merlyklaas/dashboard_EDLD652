@@ -1356,7 +1356,7 @@ Column 1 {data-width=100}
 
 **Data Source:** https://usafacts.org/
 
-Future Analyses: A plot showing how textbook expenditures have changed over time in school districts and states is being planned.
+**Future Analyses:** A plot showing how textbook expenditures have changed over time in school districts and states is being planned.
 
 Column 2 {.tabset data-width=450}
 -----------------------------------------------------------------------
