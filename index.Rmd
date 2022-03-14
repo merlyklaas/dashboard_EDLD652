@@ -1076,6 +1076,9 @@ or_book
 
 ![Color-blind OR Plot](Data/ORtxtbk_colorblind.png)
 
+> This colorblind friendly version of the Oregon graph really stands out with the vibrant yellow school distric showcased as one of the highest textbook spenders per student.
+
+
 # RQ2 Achievement vs Spending
 
 Column 1 {data-width=100}
@@ -1291,6 +1294,8 @@ Column 1 {data-width=100}
 
 **Data Source:** https://usafacts.org/
 
+Future Analyses: A plot showing how textbook expenditures have changed over time in school districts and states is being planned.
+
 Column 2 {.tabset data-width=450}
 -----------------------------------------------------------------------
 
@@ -1346,6 +1351,7 @@ kbl(myXT, caption = "Correlation Table for Textbook Expenditure") %>%
 
 ```
 
+> This table is a simple way to express the correlation statistics for the different variable looked at in response to Research Question 3. It is easy to print and reproduce for a general audience.
 
 ### Initial Scatterplot
 
@@ -1356,6 +1362,8 @@ p0 <- tbd_f4 %>%
 
 p0
 ```
+
+> This is the basic version of a scatterplot that was used to determine if any patterns could be found in the data. While no patterns were found, I decided to pursue some nicer versions of the plot for use with an online audience.
 
 ### Scatterplot for Minority Students
 
@@ -1374,6 +1382,8 @@ p1 <- tbd_f4 %>%
 p1
 ```
 
+> I chose a blue green scale for the points and tried to highlight them with a light yellow background to the other colors would pop visually.
+
 ### Scatterplot for White Students
 
 ```{r p2, echo=FALSE, dev='jpeg'}
@@ -1390,6 +1400,8 @@ p2 <- tbd_f4 %>%
 
 p2
 ```
+
+> As you can see from both plots (p1 & p2) there was no relationship between the variables as evidenced by a lack of pattern. The points are mainly clustered in the $0 to $500 dollar range regardless of the school district's percent of minority or white students. 2 outliers show school districts with total textbook expenditure per student over $3,000 dollars. Since I was unable to tell from the data if these might be private or specialized schools that are actually spending that much on textbooks, I chose to not remove these outliers from the data set being analyzed. Looking back, I wonder if I should have chosen a different color scheme for the p2 plot so that it would be easier for viewers to realize different variables are being analyzed.
 
 Column 3 {.tabset data-width=450}
 -----------------------------------------------------------------------
@@ -1412,7 +1424,7 @@ corrplot(cor(tbd_corr),
 
 ```
 
-> The ovals display the type of correlation direction, but there are no significance asterisks included for the correlations.
+> This graph seemed to be an interesting set up at first, but it is very hard to distinguish the slight size changes in the ovals from the circles - so viewers might not notice the shapes have meaning. The ovals display the type of correlation direction with the way they lean, while circles are pairs of variables closer to 0 correlation. There are no significance asterisks included for the correlations, which a more specialized audience would expect to see.
 
 ### Initial Full Correlation Matrix
 
@@ -1420,7 +1432,7 @@ corrplot(cor(tbd_corr),
 chart.Correlation(tbd_corr[, ,2:5], title = "Textbook Expenditure Correlation Matrix")
 ```
 
-> This initial version seems to busy with the large vs. small font sizes and red lines.
+> This initial version seems to busy with the large vs. small font sizes and red lines. The red lines might also make viewers think of a negative correlation when in fact there is not a strong or meaningful one between the variables being analyzed.
 
 ### Second Full Correlation Matrix
 
@@ -1429,7 +1441,7 @@ ggpairs(tbd_corr[, ,2:5],
         title="correlogram with ggpairs()")
 ```
 
-> This correlation matrix is missing the lines from the scatterplots, but it is cleaner visually with some overlap in x-axis labels.
+> This second correlation matrix is missing the lines from the scatterplots, but it is cleaner visually with some overlap in x-axis labels. The tabs on the borders stand out nicely though.
 
 ### Final Full Correlation Matrix
 
@@ -1450,4 +1462,4 @@ pairs.panels(tbd_corr[, ,2:5],
              font=2)
 ```
 
-> The color is more easily changed via the pairs.panels function.
+> The color is more easily changed via the pairs.panels function. The scatterplots now have visible lines and the color was customized to make certain aspects stand out. The font size of the correlation coefficients is now the same. The variable labels have returned to the diagonal so it might be nice to figure out a way to customize those to stand out more.
