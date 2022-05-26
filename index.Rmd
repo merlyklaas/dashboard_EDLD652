@@ -1432,19 +1432,36 @@ p0
 ```{r p1, echo=FALSE, dev='jpeg'}
 p1 <- tbd_f4 %>%
   ggplot(aes(x = textbk_exp_per_student, y = percentM)) +
-  geom_point(aes(color = textbk_exp_per_student), size=1) +
-  scale_colour_gradient(low = "light green",
-                       high = "blue", name = "Cost") +
+  geom_point(aes(color = textbk_exp_per_student, text = LEAID), size=1) +
+  scale_colour_gradient(low = "#5cb79a",
+                       high = "#7756b2", name = "Cost in US Dollars") +
   scale_x_continuous(labels = comma) +
+  scale_x_log10() +
        labs(title = "Relationship Between Percent Minority Students and Textbook Expenditure",
+            subtitle = "No relationship observed between the variables as evidenced by lack of a pattern",
+            caption = "Data Source: US Department of Education, National Center for Education Statistics, Common Core of Data (CCD)",
        y = "Percent of Minority Students in School District",
-       x= "Amount of Textbook Expenditure per Student by School District") +
-  theme(panel.background = element_rect(fill = "cornsilk", colour = "yellow"))
+       x= "Amount of Textbook Expenditure per Student by School District
+       Log Scale (Base 10)") +
+  theme(panel.background = element_rect(fill = "white", colour = "white"),
+        panel.grid.major=element_line(colour="#F5F5F5"),
+        text=element_text(family="sans"),
+        plot.title = element_text(face="bold"),
+        plot.subtitle = element_text(face="italic"),
+        plot.caption = element_text(color ="gray30",hjust = 0),
+        axis.title = element_text(face ="bold"))
 
 p1
 ```
 
 > I chose a blue green scale for the points and tried to highlight them with a light yellow background to the other colors would pop visually.
+
+```{r}
+# Identify points
+ggplotly(p1, tooltip = "text")
+```
+
+
 
 ### Scatterplot for White Students
 
